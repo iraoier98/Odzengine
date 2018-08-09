@@ -5,7 +5,11 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import entities.Camera;
+import entities.Loader;
 import exceptions.DisplayException;
+import shaders.Shader;
+import test.MainLoop;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -28,6 +32,8 @@ public class Display {
 		
 		private static int upsCount;
 		private static int fpsCount;
+		
+		private static boolean press1, press2;
 		
 		
 		public static void setUp(int width, int height, int fps, int ups) {
@@ -61,12 +67,6 @@ public class Display {
 				throw new DisplayException("Failed to create the GLFW window");
 			
 
-			glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-				if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-					glfwSetWindowShouldClose(window, true);
-			});
-			
-
 			// Center the window
 			try ( MemoryStack stack = stackPush() ) {
 				IntBuffer pWidth = stack.mallocInt(1);
@@ -77,8 +77,23 @@ public class Display {
 
 				glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2,	(vidmode.height() - pHeight.get(0)) / 2);
 			}
-			
 
+			glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+				if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+					press2 = true;
+				}
+				if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+					press2 = false;
+				}
+				if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+					press1 = true;
+				}
+				if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+					press1 = false;
+				}
+			});
+
+			
 			glfwMakeContextCurrent(window);
 			glfwSwapInterval(1);	//v-sync
 			GL.createCapabilities();			
@@ -93,7 +108,7 @@ public class Display {
 
 		public static void loop() {
 
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
 			boolean end = false;
 			upsCount = 0; fpsCount = 0;
@@ -126,7 +141,24 @@ public class Display {
 				
 				end = glfwWindowShouldClose(window);
 			}
+
+			Loader.dispose();
+			Renderer.dispose();
+			Shader.dispose();
+			dispose();
+			System.out.println("closed!");
 		}
+
+		private static void checkInput() {
+			if (press1) {
+				Camera.moveForward();
+			}
+			if (press2) {
+				Camera.moveBackwards();
+			}
+			
+		}
+
 
 		public static void dispose() {
 			glfwFreeCallbacks(window);
@@ -134,11 +166,6 @@ public class Display {
 
 			glfwTerminate();
 			glfwSetErrorCallback(null).free();
-		}
-		
-		
-		private static void checkInput() {
-			
 		}
 		
 		private static void update() {
@@ -159,8 +186,6 @@ public class Display {
 			glfwSwapBuffers(window); // swap the color buffers
 
 		}
-		
-		
 		
 		
 

@@ -2,7 +2,6 @@ package shaders;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +12,7 @@ import entities.Camera;
 import static global.GlobalVariables.*;
 import math.Matrix4f;
 
-public class Shader {
+public class GuiTextShader {
 	
 	private static int shaderProgram;
 	private static int vertexShader;
@@ -67,13 +66,9 @@ public class Shader {
 	public static void bindUniforms() {
 		int uniModel = glGetUniformLocation(shaderProgram, "model");
 		glUniformMatrix4fv(uniModel, false, transf.toFloatBuffer());
-
-		int uniView = glGetUniformLocation(shaderProgram, "view");
-		Matrix4f view = Camera.viewMatrix();
-		glUniformMatrix4fv(uniView, false, view.toFloatBuffer());
-
-		int uniProjection = glGetUniformLocation(shaderProgram, "projection");
-		Matrix4f projection = Matrix4f.ortographic(-16f / 5, 16f / 5, -9f / 5, 9f / 5, 0, 10);
+		
+		int uniProjection = glGetUniformLocation(shaderProgram, "proj");
+		Matrix4f projection = Matrix4f.ortographic(-16f / 10, 16f / 10, -9f / 10, 9f / 10, 0, 10);
 		glUniformMatrix4fv(uniProjection, false, projection.toFloatBuffer());
 	}
 	

@@ -6,11 +6,10 @@ in vec2 textureCoords;
 out vec2 pipe_textureCoords;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 proj;
 
 void main() {
 	pipe_textureCoords = textureCoords;
-    mat4 mvp = projection * view * model;
-    gl_Position = mvp * vec4(position, 1.0);
+    mat4 mvp = proj * model;
+    gl_Position = mvp * vec4(position.xy, 0.0, 1.0);
 }

@@ -1,7 +1,16 @@
-Vector3f and Matrix4f
+Memory management (1/2) shaders!
 
-Memory management (1/2 done)
+Shader start and stop (1/2)
 
-Textures
+Do perspective
+
+Jump onto 3d
+
+Fonts:
+	fix placement
+	read data about font
+
+Separate entities, terrain, text...
+
 
 ...

@@ -12,7 +12,10 @@ public class Matrix4f {
 	private float m41, m42, m43, m44;
 	
 	public Matrix4f() {
-		m11 = m22 = m33 = m44 = 1;
+		m11 = 1;
+		m22 = 1;
+		m33 = 1;
+		m44 = 1;
 	}
 	
 	
@@ -68,5 +71,84 @@ public class Matrix4f {
 		
 	}
 	
+	public static Matrix4f transformation(Vector3f position, Vector3f rotation, Vector3f scale) {
+		Matrix4f trans = new Matrix4f();
+		trans.translate(position);
+		trans.rotate(rotation.x, new Vector3f(1, 0, 0));
+		trans.rotate(rotation.y, new Vector3f(0, 1, 0));
+		trans.rotate(rotation.z, new Vector3f(0, 0, 1));
+		trans.scale(scale);
+		return trans;
+	}
+	
+	
+	/**
+	 * Scales the source matrix and put the result in the destination matrix
+	 * @param vec The vector to scale by
+	 * @param src The source matrix
+	 * @param dest The destination matrix, or null if a new matrix is to be created
+	 * @return The scaled matrix
+	 */
+	public void scale(Vector3f vec) {
+		m11 *= vec.x;
+		m22 *= vec.y;
+		m33 *= vec.z;
+	}
+	
+	//m00
+
+	/**
+	 * Rotates the source matrix around the given axis the specified angle and
+	 * put the result in the destination matrix.
+	 * @param angle the angle, in radians.
+	 * @param axis The vector representing the rotation axis. Must be normalized.
+	 * @param src The matrix to rotate
+	 * @param dest The matrix to put the result, or null if a new matrix is to be created
+	 * @return The rotated matrix
+	 */
+	public void rotate(float angle, Vector3f axis) {
+		float c = (float) Math.cos(Math.toRadians(angle));
+        float s = (float) Math.sin(Math.toRadians(angle));
+        if (axis.length() != 1f) {
+            axis.normalize();
+        }
+
+        m11 = axis.x * axis.x * (1f - c) + c;
+        m21 = axis.y * axis.x * (1f - c) + axis.z * s;
+        m31 = axis.x * axis.z * (1f - c) - axis.y * s;
+        m12 = axis.x * axis.y * (1f - c) - axis.z * s;
+        m22 = axis.y * axis.y * (1f - c) + c;
+        m32 = axis.y * axis.z * (1f - c) + axis.x * s;
+        m13 = axis.x * axis.z * (1f - c) + axis.y * s;
+        m23 = axis.y * axis.z * (1f - c) - axis.x * s;
+        m33 = axis.z * axis.z * (1f - c) + c;
+	}
+
+	/**
+	 * Translate the source matrix and stash the result in the destination matrix
+	 * @param vec The vector to translate by
+	 * @param src The source matrix
+	 * @param dest The destination matrix or null if a new matrix is to be created
+	 * @return The translated matrix
+	 */
+	public void translate(Vector3f vec) {
+		m14 += vec.x;
+		m24 += vec.y;
+		m34 += vec.z;
+	}
+
+
+	@Override
+	public String toString() {
+		return	m11 + " " + m12 + " " + m13 + " " + m14 + "\n" + 
+				m21 + " " + m22 + " " + m23 + " " + m24 + "\n" + 
+				m31 + " " + m32 + " " + m33 + " " + m43 + "\n" + 
+				m41 + " " + m42 + " " + m43 + " " + m44;
+		
+	}
+
+
+
+
 
 }

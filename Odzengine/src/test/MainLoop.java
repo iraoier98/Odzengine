@@ -1,12 +1,21 @@
 package test;
 
+import entities.Camera;
 import entities.Entity;
 import entities.Loader;
 import exceptions.DisplayException;
+import exceptions.LoaderException;
+import input.KeyListener;
+import input.Keyboard;
+import math.Vector2f;
 import render.Display;
 import render.Renderer;
+import shaders.Shader;
+import text.Letter;
+import text.Letters;
+import text.Text;
 
-public class MainLoop {
+public class MainLoop implements KeyListener{
 
 	
 	private static Entity quad;
@@ -26,9 +35,24 @@ public class MainLoop {
 		
 
 		Loader.init();
-		quad = Loader.loadQuad();
+		try {
+			quad = new Entity(Loader.loadQuad());
+			quad.a();
+		} catch (LoaderException e) {
+			e.printStackTrace();
+		}
 		Renderer.init();
 		Renderer.render(quad);
+		Letters.init();
+		Text t = new Text(new Vector2f(0, 0), "_liuyf y");
+//		Text t = new Text(new Vector2f(0, 0), "abcdefghijklmnopqrstuvwxyz");
+		Renderer.render(t);
+		
+		Camera.setUp();
+		Keyboard.setListener(new MainLoop());
+		
+
+		
 		
 		
 		
@@ -44,13 +68,6 @@ public class MainLoop {
 	private static void loop() {
 		Display.loop();
 	}
-	
-	private static void exit() {
-		Display.dispose();
-		Loader.dispose();
-		Renderer.dispose();
-	}
-
 
 
 	
@@ -61,8 +78,18 @@ public class MainLoop {
 		
 		init();
 		loop();
-		exit();
 
+	}
+
+	@Override
+	public void registerKeyPress(int key) {
+		System.out.println("Pressed " + key);
+	}
+
+	@Override
+	public void registerKeyRelease(int key) {
+		System.out.println("Released " + key);
+		
 	}
 
 	
